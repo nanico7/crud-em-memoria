@@ -144,10 +144,43 @@ app.patch('/usuario/:id', (req, res) => {
  const id = parseInt(req.params.id);
 
  if(isNaN(id)) {
-    return res.status(400).json({mensagem: "ID inválido, precisa ser um número"});
+    return res
+    .status(400)
+    .json({mensagem: "ID inválido, precisa ser um número"});
  }
 
  const usuario = usuarios.find((usuario) => usuario.id === id);
+ if(!usuario) {
+    return res.status(404).json({mensagem: "usuario não encontrado"});
+ }
+
+ const{nome, email} = req.body;
+
+ if(!nome && !email) {
+    return res.status(400).json({mensagem: "pelo menos um dos dados"});
+}
+console.log(`USUARIO ANTES DE EU ATUALIZAR ${usuario.id}:`,);
+if(email){
+let email_existe = usuarios.findIndex((usuario) => usuario.email === email);
+
+if(email_existe !== -1) {
+    return res.status(409).json({mensagem: "Email ja cadastrado"});
+ }
+ usuario.email = email;
+    console.log(`antes de atualizar EMAIL ${usuario}`);
+}
+
+    if(nome) {
+        let usuario_a_atualizar = usuarios.find((usuario) => usuario.id === id);
+        usuario_a_atualizar.nome = nome;
+        usuario.email = email;
+        console.log(`antes de atualizar NOME ${usuario}`);
+    }
+    res.status(200).json(usuario);
 });
+
+app.get("/usuario/:id", (req,res) => {
+    return res.status(200).json(usuarios.find((usuario) => usuario.id === parseInt(req.params.id)));
+})
 
 app.listen(3000);
