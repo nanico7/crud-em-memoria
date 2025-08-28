@@ -69,12 +69,12 @@ let usuarios = [
   }
 ];
 
-app.get('/usuarios', (req, res) =>{
+app.get('/usuario', (req, res) =>{
     const limit = parseInt(req.query.limit) || usuarios.length;
 
     res.json(usuarios.slice(0, limit)).status(200);
 });
-app.post('/usuarios', (req, res) =>{
+app.post('/usuario', (req, res) =>{
 
 
     const {nome, email} = req.body;
@@ -140,6 +140,14 @@ app.delete('/usuario/:id', (req, res) =>{
 
 });
 
+app.patch('/usuario/:id', (req, res) => {
+ const id = parseInt(req.params.id);
 
+ if(isNaN(id)) {
+    return res.status(400).json({mensagem: "ID inválido, precisa ser um número"});
+ }
+
+ const usuario = usuarios.find((usuario) => usuario.id === id);
+});
 
 app.listen(3000);
